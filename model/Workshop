@@ -1,0 +1,104 @@
+package com.itau.cursos.cursoscartoes.model;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
+
+@Document
+public class Workshop {
+    @Id
+    private String id;
+    @NotNull
+    private String title;
+    @NotNull
+    private String start;
+    @NotNull
+    private String end;
+    @NotNull
+    private String description;
+    @NotNull
+    private String location;
+    @NotNull
+    private String vacancies;
+    private List<User> subscribers = new ArrayList<>();
+
+    public Workshop(){}
+
+    public Workshop(String id, String title, String start, String end, String description, String location, String vacancies) {
+        this.id = id;
+        this.title = title;
+        this.start = start;
+        this.end = end;
+        this.description = description;
+        this.location = location;
+        this.vacancies = vacancies;
+        this.subscribers = new ArrayList<>();
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getStart() {
+        return start;
+    }
+
+    public void setStart(String start) {
+        this.start = start;
+    }
+
+    public String getEnd() {
+        return end;
+    }
+
+    public void setEnd(String end) {
+        this.end = end;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getVacancies() {
+        return vacancies;
+    }
+
+    public void setVacancies(String vacancies) {
+        this.vacancies = vacancies;
+    }
+
+    public List<User> getSubscribers() {
+        return subscribers;
+    }
+
+    public void setSubscribers(List<User> subscribers) {
+        this.subscribers = subscribers;
+    }
+}
