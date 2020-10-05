@@ -1,0 +1,123 @@
+package com.itau.cursos.cursoscartoes.service;
+
+//import com.itau.cursos.cursoscartoes.model.ConfirmationToken;
+import com.itau.cursos.cursoscartoes.model.ConfirmationToken;
+import com.itau.cursos.cursoscartoes.model.Course;
+import com.itau.cursos.cursoscartoes.model.User;
+//import com.itau.cursos.cursoscartoes.repository.ConfirmationTokenRepository;
+import com.itau.cursos.cursoscartoes.model.UserCoord;
+import com.itau.cursos.cursoscartoes.repository.ConfirmationTokenRepository;
+import com.itau.cursos.cursoscartoes.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class UserService {
+
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private ConfirmationTokenRepository tokenRepository;
+    @Autowired
+    private EmailSenderService emailSenderService;
+
+    public User addCourse(String email, Course course) {
+        User byEmail = userRepository.findByEmail(email);
+        byEmail.getCourses().add(course);
+        return userRepository.save(byEmail);
+    }
+
+    public boolean addUser(User user) {
+        if(userRepository.findByEmail(user.getEmail()) != null) return false;
+        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        userRepository.save(user);
+
+//        ConfirmationToken confirmationToken = new ConfirmationToken(user);
+//
+//        tokenRepository.save(confirmationToken);
+//
+//        SimpleMailMessage mailMessage = new SimpleMailMessage();
+//        mailMessage.setTo(user.getEmail());
+//        mailMessage.setSubject("Confirmação de conta");
+//        mailMessage.setFrom("bruno.russo-souza@itau-unibanco.com.br");
+//        mailMessage.setText("Clique no link para confirmar sua conta : "
+//                +"http://localhost:8080/confirm-account?token="+confirmationToken.getConfirmationToken());
+//
+//        emailSenderService.sendEmail(mailMessage);
+
+        return true;
+    }
+
+    public List<Course> findAllCoursesByEmail(String email) {
+        return userRepository.findByEmail(email).getCourses();
+    }
+
+    public List<User> findAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public List<User> findAllUsersByCoord(UserCoord coord) {
+        List<User> users = userRepository.findAll();
+        return users.stream().filter(user -> user.getCoord() == coord).collect(Collectors.toList());
+    }
+
+
+        public void editUser(User user) {
+        userRepository.save(user);
+    }
+
+    public User login(String email, String password){
+        User user = userRepository.findByEmail(email);
+        if (user != null && user.getPassword().equals(password)) return user;
+        return null;
+    }
+
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    public Course findCourseById(String email, String idCourse) {
+        User user = userRepository.findByEmail(email);
+        return user.getCourses().stream()
+                .filter(course -> course.getId().equals(idCourse))
+                .findFirst()
+                .get();
+    }
+
+    public User deleteCourseById(String email, String idCourse) {
+        User user = userRepository.findByEmail(email);
+        Course deletedCourse = user.getCourses().stream()
+                .filter(course -> course.getId().equals(idCourse))
+                .findFirst()
+                .get();
+        user.getCourses().remove(deletedCourse);
+        userRepository.save(user);
+        return user;
+    }
+
+    public void deleteAll() {
+        userRepository.deleteAll();
+    }
+
+        public boolean confirmUserAccount(String confirmationToken){
+        ConfirmationToken token = tokenRepository.findByConfirmationToken(confirmationToken);
+
+        if(token != null) {
+            User user = userRepository.findByEmail(token.getUser().getEmail());
+            user.setVerified(true);
+            userRepository.save(user);
+            return true;
+//            modelAndView.setViewName("accountVerified");
+        }
+        else {
+            return false;
+//            modelAndView.addObject("message","The link is invalid or broken!");
+//            modelAndView.setViewName("error");
+        }
+    }
+}
