@@ -1,0 +1,48 @@
+package com.itau.cursos.cursoscartoes;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.config.EnableMongoAuditing;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+@SpringBootApplication(exclude={DataSourceAutoConfiguration.class})
+@Configuration
+@EnableMongoAuditing
+public class CursosCartoesApplication {
+
+	public static void main(String[] args) {
+		
+
+		SpringApplication.run(CursosCartoesApplication.class, args);
+	}
+
+	static void  teste() throws IOException{
+
+	}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
