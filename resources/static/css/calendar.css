@@ -1,0 +1,86 @@
+body {
+    margin: 40px 10px !important;
+    padding: 0;
+    font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+    font-size: 14px;
+  }
+
+ .fc-event{
+     color: #fff !important;
+ }
+  #calendar {
+    max-width: 1200px;
+    max-height: 600px;
+    margin: 0 auto;
+  }
+
+  .alert {
+     height:30px !important;
+     padding: 0.1rem 1.25rem !important;
+  }
+
+  .viewEvent{
+    display: block;
+  }
+
+  .formEdit{
+    display: none;
+  }
+
+  .formViewSubs{
+    display: none;
+  }
+
+  .btn-primary{
+      background-color: #000099 !important;
+      border-color: #000099 !important;
+      color: white !important;
+  }
+
+  .btn-danger{
+      background-color: #FE5501 !important;
+      border-color: #FE5501 !important;
+  }
+
+  #btnDelete{
+    margin-left:199px;
+  }
+
+  .toast.show {
+      display: block;
+      opacity: 1;
+      z-index: 7;
+  }
+
+  .past-event.fc-event, .past-event .fc-event-dot {
+      background: #a7a7a7;
+      border-color: #848484
+  }
+
+  .fc-button-primary {
+      color: #fff;
+      background-color: #000099;
+      border-color: #000099;
+      position: absolute;
+  }
+
+  #btnBackToCourses{
+    background-color: #FE5501;
+    border-color: #FE5501;
+    margin-left: 87.7%;
+    margin-top: -2.0%;
+    position: absolute;
+  }
+
+  #btnGenerateExcel{
+      background-color: #009933 !important;
+      border-color: #009933 !important;
+      margin-left: 5.9%;
+      margin-top: -2.1%;
+      position: absolute;
+  }
+
+  #btnExcelGen{
+      background-color: #009933 !important;
+      border-color: #009933 !important;
+  }
