@@ -1,0 +1,23 @@
+package com.itau.cursos.cursoscartoes.model;
+
+public enum CourseDimension {
+    CERTIFICACAO ("Certificação"),
+    DOUTORADO ("Doutorado"),
+    ESPECIALIZACAO ("Especialização"),
+    EXTRA_CURRICULAR ("Extra Curricular"),
+    GRADUACAO ("Graduação"),
+    IDIOMAS ("Idiomas"),
+    MBA ("MBA"),
+    MESTRADO ("Mestrado"),
+    TECNICO ("Técnico");
+
+    private final String displayName;
+
+    CourseDimension(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getDisplayName(){
+        return this.displayName;
+    }
+}
