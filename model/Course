@@ -1,0 +1,77 @@
+package com.itau.cursos.cursoscartoes.model;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.validation.constraints.NotNull;
+import java.util.Date;
+import java.util.UUID;
+
+public class Course {
+    @Id
+    private String id;
+    @NotNull
+    private String name;
+    @NotNull
+    private String description;
+    @NotNull
+    private String institution;
+    @NotNull
+    private CourseDimension dimension;
+    @NotNull
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date dtConclusion;
+
+    public Course(String name, String description, String institution, CourseDimension dimension, Date dtConclusion) {
+        this.id = UUID.randomUUID().toString();
+        this.name = name;
+        this.description = description;
+        this.institution = institution;
+        this.dimension = dimension;
+        this.dtConclusion = dtConclusion;
+    }
+
+    public String getId() { return id; }
+
+    public void setId(String id) { this.id = id; }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(String institution) {
+        this.institution = institution;
+    }
+
+    public Enum getDimension() {
+        return dimension;
+    }
+
+    public void setDimension(CourseDimension dimension) {
+        this.dimension = dimension;
+    }
+
+    public Date getDtConclusion() {
+        return dtConclusion;
+    }
+
+    public void setDtConclusion(Date dtConclusion) {
+        this.dtConclusion = dtConclusion;
+    }
+}
