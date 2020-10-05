@@ -1,0 +1,34 @@
+package com.itau.cursos.cursoscartoes.utils;
+
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+public class UploadArchive {
+    public HttpEntity<byte[]> upload(String path) throws IOException {
+        byte[] arquivo = Files.readAllBytes( Paths.get(path) );
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+
+        httpHeaders.add("Content-Disposition", "attachment;filename=" + path);
+
+        HttpEntity<byte[]> entity = new HttpEntity<>(arquivo, httpHeaders);
+
+        return entity;
+    }
+
+    public HttpEntity<byte[]> uploadTxt(String path) throws IOException {
+        byte[] arquivo = Files.readAllBytes( Paths.get(path) );
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+
+        httpHeaders.add("Content-Disposition", "attachment;filename=\"Resultado.txt\"");
+
+        HttpEntity<byte[]> entity = new HttpEntity<>(arquivo, httpHeaders);
+
+        return entity;
+    }
+}
