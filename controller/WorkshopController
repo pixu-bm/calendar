@@ -1,0 +1,110 @@
+package com.itau.cursos.cursoscartoes.controller;
+
+import com.itau.cursos.cursoscartoes.model.User;
+import com.itau.cursos.cursoscartoes.model.Workshop;
+import com.itau.cursos.cursoscartoes.service.UserService;
+import com.itau.cursos.cursoscartoes.service.WorkshopService;
+import com.itau.cursos.cursoscartoes.utils.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.List;
+
+@Controller
+public class WorkshopController {
+    @Autowired
+    WorkshopService wsService;
+    @Autowired
+    UserService userService;
+
+    private UserUtils userUtils = new UserUtils();
+
+    @GetMapping("/getEventos.json")
+    public @ResponseBody List<Workshop> GetEventos(){
+        return wsService.findAllWorkshops();
+    }
+
+    @GetMapping("/calendar")
+    public String showCalendar(){
+        return "calendar";
+    }
+
+    @GetMapping("/workshop")
+    public String showWorkshop(Model model){
+        User user = userUtils.getLoggedUser();
+        model.addAttribute("user", user);
+        return "workshop";
+    }
+
+    @GetMapping("/delete")
+    public String deleteWorkshop(@RequestParam(value="id") String id) {
+        wsService.deleteWorkshopById(id);
+        return "calendar";
+    }
+
+    @GetMapping("/findSubscribers")
+    public @ResponseBody List<User> findSubscribers(@RequestParam(value="id") String id, Model model) {
+        return wsService.findSubscribersByWorkshopId(id);
+    }
+
+    @PostMapping("/subscribe")
+    public @ResponseBody Workshop subscribe(@RequestParam String id) {
+        Workshop workshop = wsService.findWorkshopById(id);
+        User user = userUtils.getLoggedUser();
+        return wsService.addSubscriber(user, workshop);
+    }
+
+    @PostMapping("/unsubscribe")
+    public @ResponseBody Workshop unsubscribe(@RequestParam String id) {
+        User user = userUtils.getLoggedUser();
+        return wsService.removeSubscriberByEmail(user.getEmail(), id);
+
+    }
+
+    @PostMapping("/addWorkshop")
+    public String addWorkshop(@ModelAttribute(name="workshopForm") Workshop workshopForm, Model model) throws ParseException {
+        String message;
+        try {
+            DateHelpers dateHelpers = new DateHelpers();
+
+            String start = workshopForm.getStart();
+            String end = workshopForm.getEnd();
+            //Caso as datas sejam iguais eu altero para não gerar erro no calendar
+            if (start.equals(end)) end = dateHelpers.alterDate(end);
+
+            String startConverted = dateHelpers.dateConverter(start);
+            String endConverted = dateHelpers.dateConverter(end);
+
+            workshopForm.setStart(startConverted);
+            workshopForm.setEnd(endConverted);
+            wsService.saveWorkshop(workshopForm);
+
+            message = "Workshop cadastrado com sucesso";
+        }
+        catch (Exception e){
+            message = "Erro ao salvar workshop";
+        }
+
+        model.addAttribute("message", message);
+        return "calendar";
+    }
+
+    @PostMapping("/generate/workshop")
+    public HttpEntity<byte[]> downloadWorkshop(@RequestParam String dtStart, @RequestParam String dtFinal) throws IOException {
+        List<Workshop> workshops = wsService.findWorkshopsByDateRange(dtStart, dtFinal);
+
+        ExcelGeneratorWorkshop excelGen = new ExcelGeneratorWorkshop();
+        excelGen.generate(workshops);
+
+        String pathLocal = "C:/Users/SOUZRUS/workspace/cursos-cartoes/workshops.xls";
+        String pathLinux = "./workshops.xls";
+
+        UploadArchive uploadArchive = new UploadArchive();
+        return uploadArchive.upload(pathLinux);
+    }
+}
