@@ -1,0 +1,23 @@
+package com.itau.cursos.cursoscartoes.model;
+
+public enum UserCoord {
+    ANDRESSA_ANDRADE ("Andressa de Andrade"),
+    FRANCISCO_EVANGELISTA ("Francisco Evangelista"),
+    LEANDRO_GUARINO ("Leandro Guarino"),
+    LEONARDO_MARQUES ("Leonardo Marques"),
+    LUCAS_PLIS ("Lucas Plis Dolce"),
+    LUCIANO_LIMA ("Luciano Lima Vieira"),
+    MARCOS_AZEVEDO ("Marcos de Azevedo"),
+    PAULO_AUGUSTO ("Paulo Augusto de Farias"),
+    RICARDO_CORES ("Ricardo Weynen Cores");
+
+    private final String displayName;
+
+    UserCoord(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getDisplayName(){
+        return this.displayName;
+    }
+}
