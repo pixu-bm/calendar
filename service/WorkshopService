@@ -1,0 +1,66 @@
+package com.itau.cursos.cursoscartoes.service;
+
+import com.itau.cursos.cursoscartoes.model.User;
+import com.itau.cursos.cursoscartoes.model.Workshop;
+import com.itau.cursos.cursoscartoes.repository.WorkshopRepository;
+import com.itau.cursos.cursoscartoes.utils.DateHelpers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class WorkshopService {
+    @Autowired
+    WorkshopRepository repository;
+
+    public List<Workshop> findAllWorkshops() {
+        return repository.findAll();
+    }
+
+    public Workshop findWorkshopById(String id) { return repository.findById(id).get(); }
+
+    public User findUserByEmail(String id, String email) {
+        Workshop workshop = repository.findById(id).get();
+        return workshop.getSubscribers().stream()
+                .filter(user -> user.getEmail().equals(email))
+                .findFirst()
+                .get();
+    }
+
+    public Workshop saveWorkshop(Workshop workshop) { return repository.save(workshop); }
+
+    public void deleteWorkshopById(String id) {repository.deleteById(id);}
+
+    public Workshop addSubscriber(User user, Workshop workshop) {
+        workshop.getSubscribers().add(user);
+        return repository.save(workshop);
+    }
+
+    public Workshop removeSubscriberByEmail(String email, String idWorkshop) {
+        Workshop workshop = repository.findById(idWorkshop).get();
+        User deletedUser = workshop.getSubscribers().stream()
+                .filter(user -> user.getEmail().equals(email))
+                .findFirst()
+                .get();
+        workshop.getSubscribers().remove(deletedUser);
+        return repository.save(workshop);
+    }
+
+    public List<User> findSubscribersByWorkshopId(String id) {
+        return repository.findById(id).get().getSubscribers();
+    }
+
+    public List<Workshop> findWorkshopsByDateRange(String begin, String end) {
+        DateHelpers dtHelpers = new DateHelpers();
+        int intBegin = dtHelpers.parseInt(begin);
+        int intEnd = dtHelpers.parseInt(end);
+
+        List<Workshop> workshops = repository.findAll().stream()
+                .filter(workshop -> dtHelpers.parseInt(workshop.getStart()) >= intBegin && dtHelpers.parseInt(workshop.getEnd()) <= intEnd)
+                .collect(Collectors.toList());
+
+        return workshops;
+    }
+}
