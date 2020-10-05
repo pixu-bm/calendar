@@ -1,0 +1,114 @@
+.navbar-inverse {
+    background-color: #FE5501 !important;
+    border-color: #FE5501 !important;
+    height: 60px !important
+}
+
+.panel-body{
+   padding: 95px !important;
+}
+
+.img-responsive{
+    width: 80px !important;
+    height: 80px !important;
+}
+
+#container{
+    margin-top: 30px !important;
+}
+
+#btnAdd{
+    margin-top: -200px !important;
+    margin-left: 94px !important;
+}
+
+#btnGerar{
+    margin-top: -200px !important;
+    margin-left: 9px !important;
+    background-color: #009933 !important;
+    border-color: #009933 !important;
+}
+
+#btnGerarCoord{
+    margin-left: 9px !important;
+    background-color: #009933 !important;
+    border-color: #009933 !important;
+}
+
+.btn-primary{
+    background-color: #000099 !important;
+    border-color: #000099 !important;
+}
+
+.btn-danger{
+    background-color: #FE5501 !important;
+    border-color: #FE5501 !important;
+}
+
+.h4Title{
+    padding-top: 15px !important;
+    margin-right: 450px !important;
+    color: white !important;
+    font-size: 15px;
+}
+
+#liTitle{
+    margin-right: -110px;
+}
+
+.sair{
+    padding-top: 0px !important;
+    color: white !important;
+    margin-top: -10px !important;
+}
+
+.modal-title{
+    margin-bottom: -320px !important;
+    font-weight: bold !important;
+}
+
+.modal-header{
+    border-bottom: 0px !important;
+}
+
+.imgEmpty{
+    width: 40px;
+    height: 40px;
+}
+
+.noCourses{
+    color: #838383;
+    font-size: 20px;
+    float: left;
+    margin-left: 32% !important;
+    display: block;
+}
+
+.racf{
+    font-weight: bold !important;
+    padding-top: 12px !important;
+    font-family: 'Mukta', sans-serif ;
+    color: white !important;
+    font-size: 16px !important;
+    margin-left: 2.3% !important;
+}
+
+.user{
+    text-align: center;
+    align: center;
+}
+
+.navbar-inverse .navbar-nav>.active>a{
+    background-color: #e44d01 !important;
+}
+
+.navbar-inverse .navbar-nav>li>a{
+    color: white !important
+}
+
+.navbar-inverse .navbar-nav>li>a:hover{
+    color: black !important
+}
+
+
+
