@@ -1,0 +1,190 @@
+package com.itau.cursos.cursoscartoes.controller;
+
+import com.itau.cursos.cursoscartoes.model.Course;
+import com.itau.cursos.cursoscartoes.model.User;
+import com.itau.cursos.cursoscartoes.service.UserService;
+import com.itau.cursos.cursoscartoes.utils.CpfValidator;
+import com.itau.cursos.cursoscartoes.utils.ExcelGenerator;
+import com.itau.cursos.cursoscartoes.utils.UploadArchive;
+import com.itau.cursos.cursoscartoes.utils.UserUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.validation.Valid;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+@Controller(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+@RequestMapping("/user")
+public class UserController {
+    @Autowired
+    private UserService service;
+
+    private UserUtils userUtils = new UserUtils();
+
+    @GetMapping("/login")
+    public String showIndex() {
+        return "index";
+    }
+
+    @GetMapping("/logout")
+    public String logout() {
+        return "index";
+    }
+
+    @GetMapping("/index")
+    public String index(Model model) {
+        User user = userUtils.getLoggedUser();
+        model.addAttribute("user", user);
+        if(user.isAdmin()) return "choose-access";
+        return "courses";
+    }
+
+    @GetMapping("/signup")
+    public String showSignUpForm(Model model) {
+        model.addAttribute(new User());
+        return "add-user";
+    }
+
+    @GetMapping("/course/cancel/edit/{email}")
+    public String showEditCourseForm(@PathVariable String email, Model model) {
+        model.addAttribute("user", service.findUserByEmail(email));
+        return "courses";
+    }
+
+    @GetMapping("/admin-access")
+    public String showAdminForm(Model model) {
+        User user = userUtils.getLoggedUser();
+        model.addAttribute("user", service.findUserByEmail(user.getEmail()));
+        return "admin-page";
+    }
+
+    @GetMapping("/standard-access")
+    public String showCoursesForm(Model model) {
+        User user = userUtils.getLoggedUser();
+        model.addAttribute("user", service.findUserByEmail(user.getEmail()));
+        return "courses";
+    }
+
+    @GetMapping("/course/edit/{id}/{email}")
+    public String showEditCourseForm(@PathVariable String id, @PathVariable String email, Model model) {
+        List<Course> courses = new ArrayList<>();
+        courses.add(service.findCourseById(email, id));
+        User user = service.findUserByEmail(email);
+
+        User newUser = new User();
+        newUser.setEmail(email);
+        newUser.setRacf(user.getRacf());
+        newUser.setCourses(courses);
+        model.addAttribute("user", newUser);
+        return "edit-course";
+    }
+
+    @GetMapping("/course/delete/{id}/{email}")
+    public String deleteCourse(@PathVariable String id, @PathVariable String email, Model model) {
+        model.addAttribute("user", service.deleteCourseById(email, id));
+        return "courses";
+    }
+
+    @PostMapping("/add")
+    public String addUser(@Valid User user, BindingResult result, Model model) {
+        if (result.hasErrors() || !service.addUser(user)) {
+            model.addAttribute("invalidEmail", true);
+            return "add-user";
+        }
+        model.addAttribute("success", true);
+        return "add-user";
+    }
+
+    @PostMapping("/course/add/{email}")
+    public String addCourse(@ModelAttribute(name = "newCourse") Course newCourse,
+                            @PathVariable String email, Model model) {
+        User user = service.addCourse(email, newCourse);
+        List<Course> courses = user.getCourses();
+
+        model.addAttribute("user", user);
+        return "courses";
+    }
+
+    @PostMapping("/course/edit/{email}/{idCourse}")
+    public String editCourse(@ModelAttribute(name = "user") User user, @PathVariable String email, @PathVariable String idCourse, Model model) {
+        Course course = user.getCourses().get(0);
+
+        User newUser = service.deleteCourseById(email, idCourse);
+        newUser.getCourses().add(course);
+        service.addCourse(user.getEmail(), course);
+        model.addAttribute("user", newUser);
+        return "courses";
+    }
+
+    @GetMapping("/generate")
+    public HttpEntity<byte[]> download() throws IOException {
+        List<User> users = service.findAllUsers();
+
+        ExcelGenerator excelGen = new ExcelGenerator();
+        excelGen.generate(users);
+
+        String pathLocal = "C:/Users/SOUZRUS/workspace/cursos-cartoes/cursos.xls";
+        String pathLinux = "./cursos.xls";
+
+        UploadArchive uploadArchive = new UploadArchive();
+        return uploadArchive.upload(pathLinux);
+    }
+
+    @PostMapping("/generate/coord")
+    public HttpEntity<byte[]> downloadCoord(@ModelAttribute(name = "user") User user) throws IOException {
+        List<User> users = service.findAllUsersByCoord(user.getCoord());
+
+        ExcelGenerator excelGen = new ExcelGenerator();
+        excelGen.generate(users);
+
+        String pathLocal = "C:/Users/SOUZRUS/workspace/cursos-cartoes/cursos.xls";
+        String pathLinux = "./cursos.xls";
+
+        UploadArchive uploadArchive = new UploadArchive();
+        return uploadArchive.upload(pathLinux);
+    }
+
+
+    //*****************VALIDAR CPF*******************
+    @GetMapping("/validate/cpf")
+    public String showValidate() {
+        return "validate-cpf";
+    }
+
+    @PostMapping("/upload")
+    public HttpEntity<byte[]> uploadCpfResult(@RequestParam("file") MultipartFile file) throws IOException {
+
+        CpfValidator cpfValidator = new CpfValidator();
+        cpfValidator.validateArchive(file);
+
+        String pathLinux = "./Resultado.txt";
+        UploadArchive uploadArchive = new UploadArchive();
+        return uploadArchive.uploadTxt(pathLinux);
+    }
+
+        @GetMapping("/deleteAll")
+    public String deleteAllUsers(){
+        service.deleteAll();
+        return "OK";
+    }
+
+        @RequestMapping(value="/confirm-account", method= {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView confirmUserAccount(ModelAndView modelAndView, @RequestParam("token")String confirmationToken)
+    {
+        if(service.confirmUserAccount(confirmationToken));
+            modelAndView.setViewName("accountVerified");
+
+        modelAndView.addObject("message","Link inválido");
+        modelAndView.setViewName("error");
+        return modelAndView;
+    }
+}
