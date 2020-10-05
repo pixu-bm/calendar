@@ -1,0 +1,8 @@
+package com.itau.cursos.cursoscartoes.repository;
+
+import com.itau.cursos.cursoscartoes.model.User;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface UserRepository extends MongoRepository<User, String> {
+    User findByEmail(String email);
+}
