@@ -1,0 +1,33 @@
+.example_e {
+border: none;
+background: #FE5501;
+color: #ffffff !important;
+font-weight: 200;
+padding: 40px;
+text-transform: uppercase;
+border-radius: 6px;
+
+transition: all 0.3s ease 0s;
+font-weight:bold;
+}
+
+.example_e:hover {
+color: #404040 !important;
+font-weight: 700 !important;
+letter-spacing: 3px;
+background: none;
+-webkit-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
+-moz-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
+transition: all 0.3s ease 0s;
+font-weight:bold;
+}
+
+.row1{
+    display: inline-block;
+}
+
+.row2{
+    display: inline-block;
+    margin-top: 55px;
+    margin-right: 70px
+}
